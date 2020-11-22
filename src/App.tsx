@@ -110,10 +110,30 @@ class PopupWindow extends React.PureComponent<
     if (this.props.onClose) {
       this.timer = window.setInterval(() => {
         if (!this.window || this.window.closed) {
-          this.props.onClose();
+          if (this.props.onClose) {
+            this.props.onClose();
+          }
         }
       }, 1000);
     }
+    // Copy the app's styles into the new window
+    const stylesheets = Array.from(document.styleSheets);
+    stylesheets.forEach(stylesheet => {
+      const css = stylesheet as CSSStyleSheet;
+
+      if (stylesheet.href) {
+        const newStyleElement = document.createElement('link');
+        newStyleElement.rel = 'stylesheet';
+        newStyleElement.href = stylesheet.href;
+        popupWindow.document.head.appendChild(newStyleElement);
+      } else if (css && css.cssRules && css.cssRules.length > 0) {
+        const newStyleElement = document.createElement('style');
+        Array.from(css.cssRules).forEach(rule => {
+          newStyleElement.appendChild(document.createTextNode(rule.cssText));
+        });
+        popupWindow.document.head.appendChild(newStyleElement);
+      }
+    });
     // Create a div for the content
     const container = this.window.document.createElement('div');
     this.window.document.body.appendChild(container);
