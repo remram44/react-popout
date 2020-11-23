@@ -77,19 +77,19 @@ export class App extends React.PureComponent<{}, AppState> {
 }
 
 interface PopupWindowProps {
-  onOpen?: any;
-  onClose?: any;
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
 interface PopupWindowState {
-  container: any;
+  container?: HTMLElement;
 }
 
 class PopupWindow extends React.PureComponent<
   PopupWindowProps,
   PopupWindowState
 > {
-  window?: any;
+  window?: Window;
   timer?: number;
 
   constructor(props: PopupWindowProps) {
